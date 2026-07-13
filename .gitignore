@@ -1,0 +1,6 @@
+generated_images/*
+!.gitkeep
+.env
+__pycache__/
+*.db
+.venv/
