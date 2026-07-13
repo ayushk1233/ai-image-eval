@@ -15,3 +15,5 @@ progress.md
 # Local test / scratch scripts (not part of the pipeline)
 test_*.py
 backend/test_*.py
+
+ai_image_eval_results.csv
