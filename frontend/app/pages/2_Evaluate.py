@@ -1,0 +1,128 @@
+import streamlit as st
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from api_client import register_participant, get_unrated_images, submit_rating
+
+st.set_page_config(page_title="Evaluate Images", page_icon="📝", layout="wide")
+
+st.markdown("""
+    <style>
+    .stSlider > div > div > div { background-color: #845EC2; }
+    .image-container { 
+        padding: 1rem; 
+        border-radius: 12px; 
+        background: #1E2128; 
+        border: 1px solid #333;
+        margin-bottom: 2rem;
+    }
+    .prompt-box {
+        font-size: 1.2rem;
+        padding: 1rem;
+        background: #2D323E;
+        border-left: 4px solid #FF6B6B;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+if "participant_id" not in st.session_state:
+    st.session_state.participant_id = None
+
+st.title("📝 Evaluate Images")
+
+if not st.session_state.participant_id:
+    st.markdown("### Participant Registration")
+    st.write("Before we begin, please register. You must be 18 or older.")
+    
+    with st.form("registration_form"):
+        name = st.text_input("Name")
+        email = st.text_input("Email Address")
+        age = st.number_input("Age", min_value=1, max_value=120, value=25)
+        
+        st.markdown("#### Consent")
+        st.info("By clicking 'Register & Begin', I consent to my ratings being recorded and analyzed for this AI evaluation study. I understand my email will only be used to prevent duplicate submissions.")
+        
+        submitted = st.form_submit_button("Register & Begin", type="primary")
+        
+        if submitted:
+            if age < 18:
+                st.error("You must be at least 18 years old.")
+            elif not name or not email:
+                st.error("Please fill out all fields.")
+            else:
+                try:
+                    participant = register_participant(name, email, age, True)
+                    st.session_state.participant_id = participant["id"]
+                    st.success("Registered successfully!")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Registration failed. Please make sure you entered a valid email. Error details: {str(e)}")
+
+else:
+    st.write(f"Logged in as Participant ID: `{st.session_state.participant_id}`")
+    if st.button("Log out"):
+        st.session_state.participant_id = None
+        st.rerun()
+        
+    st.markdown("---")
+    
+    try:
+        unrated = get_unrated_images(st.session_state.participant_id)
+        if not unrated:
+            st.success("🎉 You have rated all available images! Thank you for your contribution.")
+        else:
+            # We show one image at a time for evaluation
+            current_image = unrated[0]
+            
+            st.markdown(f"**{len(unrated)} images left to rate.**")
+            
+            st.markdown('<div class="image-container">', unsafe_allow_html=True)
+            st.markdown(f'<div class="prompt-box">"{current_image["prompt"]["prompt_text"]}"</div>', unsafe_allow_html=True)
+            
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                st.write("**Model Output:**")
+                if current_image.get("image_path"):
+                    # Normally we'd serve via URL, but for the MVP Streamlit can read the mounted volume directly if running in Docker.
+                    # Or we can just display a placeholder since we don't have an image server yet.
+                    # Wait, the spec says "Streamlit UI (Home/Generate/Evaluate/Dashboard)"
+                    # We can use st.image reading the file path, but Streamlit container might not see backend's generated_images/ path unless mounted.
+                    # Wait, in docker-compose.yml we mounted `- ./generated_images:/app/generated_images` for BOTH backend and frontend.
+                    # So Streamlit CAN read the file directly!
+                    path = f"/app/{current_image['image_path']}"
+                    if os.path.exists(path):
+                        st.image(path, use_container_width=True)
+                    elif os.path.exists(f"../{current_image['image_path']}"):
+                         st.image(f"../{current_image['image_path']}", use_container_width=True)
+                    else:
+                        st.warning(f"Image file not found at {current_image['image_path']}")
+                else:
+                    st.warning("No image path provided by the backend.")
+            
+            with col2:
+                st.write("**Rate this generation (1 = Poor, 5 = Excellent):**")
+                with st.form("rating_form"):
+                    adherence = st.slider("Prompt Adherence", 1, 5, 3)
+                    visual = st.slider("Visual Quality", 1, 5, 3)
+                    indian = st.slider("Indian Cultural Relevance", 1, 5, 3)
+                    overall = st.slider("Overall Impression", 1, 5, 3)
+                    comments = st.text_area("Optional Comments")
+                    
+                    submit = st.form_submit_button("Submit Rating", type="primary")
+                    if submit:
+                        try:
+                            submit_rating(
+                                st.session_state.participant_id, 
+                                current_image["id"], 
+                                adherence, visual, indian, overall, comments
+                            )
+                            st.success("Rating submitted!")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Failed to submit rating: {str(e)}")
+            st.markdown('</div>', unsafe_allow_html=True)
+                            
+    except Exception as e:
+        st.error(f"Failed to load images: {str(e)}")
