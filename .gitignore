@@ -1,6 +1,13 @@
 generated_images/*
-!.gitkeep
+!generated_images/.gitkeep
 .env
 __pycache__/
+*.pyc
 *.db
 .venv/
+*.egg-info/
+.DS_Store
+
+# Planning / spec documents (local only)
+josh-ai-image-eval-MVP-SPEC.md
+progress.md
