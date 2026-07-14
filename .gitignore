@@ -3,7 +3,6 @@ generated_images/*
 .env
 __pycache__/
 *.pyc
-*.db
 .venv/
 *.egg-info/
 .DS_Store
