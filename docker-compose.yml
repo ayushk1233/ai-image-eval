@@ -31,4 +31,5 @@ services:
     volumes:
       - ./generated_images:/app/generated_images
       - ./reports:/app/reports
+      - ./docs:/app/docs
     restart: unless-stopped
