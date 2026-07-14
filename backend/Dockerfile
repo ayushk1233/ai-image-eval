@@ -11,6 +11,8 @@ COPY backend /app/backend
 COPY docs /app/docs
 COPY reports /app/reports
 COPY data /app/data
+COPY generated_images /app/generated_images
+
 
 # Expose port and start script
 EXPOSE 8000
