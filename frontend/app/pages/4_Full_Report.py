@@ -8,6 +8,7 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from api_client import get_export_csv
+from pdf_export import generate_full_report_pdf
 
 st.set_page_config(page_title="Deep Dive Report", page_icon="📜", layout="wide")
 
@@ -220,21 +221,21 @@ st.caption('"Close-up of a modern Indian bride wearing a pastel lehenga with int
 col1, col2, col3 = st.columns(3)
 with col1:
     try:
-        st.image("/app/docs/showcase/bridal_gpt5mini.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/bridal_gpt5mini.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>GPT-5-Mini</b><br>High Focus, Lower Fabric Realism</p>", unsafe_allow_html=True)
 
 with col2:
     try:
-        st.image("/app/docs/showcase/bridal_gemini25.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/bridal_gemini25.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>Gemini 2.5 Flash</b><br>Balanced</p>", unsafe_allow_html=True)
 
 with col3:
     try:
-        st.image("/app/docs/showcase/bridal_gemini31.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/bridal_gemini31.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>Gemini 3.1 Flash</b><br>High Realism, Distracting Background</p>", unsafe_allow_html=True)
@@ -246,19 +247,19 @@ st.caption('"A handsome Indian man in a navy blue embroidered Kurta pajama, posi
 col4, col5, col6 = st.columns(3)
 with col4:
     try:
-        st.image("/app/docs/showcase/kurta_gpt5mini.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/kurta_gpt5mini.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>GPT-5-Mini</b><br>Score: 4/5</p>", unsafe_allow_html=True)
 with col5:
     try:
-        st.image("/app/docs/showcase/kurta_gemini25.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/kurta_gemini25.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>Gemini 2.5 Flash</b><br>Score: 5/5</p>", unsafe_allow_html=True)
 with col6:
     try:
-        st.image("/app/docs/showcase/kurta_gemini31.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/kurta_gemini31.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>Gemini 3.1 Flash</b><br>Score: 5/5</p>", unsafe_allow_html=True)
@@ -270,19 +271,19 @@ st.caption('"An Indian woman in a vibrant yellow salwar kameez twirling, festive
 col7, col8, col9 = st.columns(3)
 with col7:
     try:
-        st.image("/app/docs/showcase/salwar_gpt5mini.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/salwar_gpt5mini.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>GPT-5-Mini</b><br>Score: 4/5</p>", unsafe_allow_html=True)
 with col8:
     try:
-        st.image("/app/docs/showcase/salwar_gemini25.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/salwar_gemini25.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>Gemini 2.5 Flash</b><br>Score: 4/5</p>", unsafe_allow_html=True)
 with col9:
     try:
-        st.image("/app/docs/showcase/salwar_gemini31.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/salwar_gemini31.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>Gemini 3.1 Flash</b><br>Score: 3/5</p>", unsafe_allow_html=True)
@@ -294,19 +295,19 @@ st.caption('"A male model wearing a sleek black Nehru jacket over a white kurta,
 col10, col11, col12 = st.columns(3)
 with col10:
     try:
-        st.image("/app/docs/showcase/nehru_gpt5mini.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/nehru_gpt5mini.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>GPT-5-Mini</b><br>Score: 2/5</p>", unsafe_allow_html=True)
 with col11:
     try:
-        st.image("/app/docs/showcase/nehru_gemini25.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/nehru_gemini25.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>Gemini 2.5 Flash</b><br>Score: 3/5</p>", unsafe_allow_html=True)
 with col12:
     try:
-        st.image("/app/docs/showcase/nehru_gemini31.png", use_container_width=True)
+        st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/docs/showcase/nehru_gemini31.png", use_container_width=True)
     except:
         pass
     st.markdown("<p class='img-caption'><b>Gemini 3.1 Flash</b><br>Score: 3/5</p>", unsafe_allow_html=True)
@@ -318,3 +319,25 @@ This large-scale evaluation proves that there is no "perfect" model for Indian E
 If you need strict, predictable catalog framing and rapid generation speeds at scale, use <b>GPT-5 Mini</b>. If you demand pristine photorealism and exquisite cultural accuracy for high-ticket items, use <b>Gemini 3.1 Flash</b>, but be prepared to pay a premium in cost, latency, and aggressive negative prompting to force plain studio backgrounds.
 </div>
 """, unsafe_allow_html=True)
+
+# Sidebar PDF Download Button
+st.sidebar.markdown("### Export")
+with st.sidebar.expander("📄 Download Report"):
+    st.write("Generate a full PDF version of this report including all charts and images.")
+    if st.button("Generate PDF"):
+        with st.spinner("Rendering PDF (this may take a few seconds)..."):
+            try:
+                pdf_bytes = generate_full_report_pdf(
+                    df=df,
+                    total_votes=total_votes,
+                    total_prompts=total_prompts
+                )
+                st.download_button(
+                    label="⬇️ Download PDF",
+                    data=pdf_bytes,
+                    file_name="AI_Image_Eval_Report.pdf",
+                    mime="application/pdf"
+                )
+                st.success("PDF Generated Successfully!")
+            except Exception as e:
+                st.error(f"Failed to generate PDF: {str(e)}")

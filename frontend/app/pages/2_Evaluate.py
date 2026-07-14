@@ -99,19 +99,7 @@ else:
             with col1:
                 st.write("**Model Output:**")
                 if current_image.get("image_path"):
-                    # Normally we'd serve via URL, but for the MVP Streamlit can read the mounted volume directly if running in Docker.
-                    # Or we can just display a placeholder since we don't have an image server yet.
-                    # Wait, the spec says "Streamlit UI (Home/Generate/Evaluate/Dashboard)"
-                    # We can use st.image reading the file path, but Streamlit container might not see backend's generated_images/ path unless mounted.
-                    # Wait, in docker-compose.yml we mounted `- ./generated_images:/app/generated_images` for BOTH backend and frontend.
-                    # So Streamlit CAN read the file directly!
-                    path = f"/app/{current_image['image_path']}"
-                    if os.path.exists(path):
-                        st.image(path, use_container_width=True)
-                    elif os.path.exists(f"../{current_image['image_path']}"):
-                         st.image(f"../{current_image['image_path']}", use_container_width=True)
-                    else:
-                        st.warning(f"Image file not found at {current_image['image_path']}")
+                    st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/{current_image['image_path']}", use_container_width=True)
                 else:
                     st.warning("No image path provided by the backend.")
             

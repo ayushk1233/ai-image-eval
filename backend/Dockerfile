@@ -6,9 +6,14 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend source
+# Copy backend source, static files, and initial database
 COPY backend /app/backend
+COPY docs /app/docs
+COPY reports /app/reports
+COPY data /app/data
+COPY generated_images /app/generated_images
 
-# Expose port and run uvicorn
+
+# Expose port and start script
 EXPOSE 8000
-CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/app/backend/start.sh"]

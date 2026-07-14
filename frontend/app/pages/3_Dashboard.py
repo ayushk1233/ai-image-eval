@@ -63,14 +63,14 @@ try:
     st.markdown("### Benchmark Report Graphs")
     colA, colB = st.columns(2)
     with colA:
-        if os.path.exists("/app/reports/overall_score.png"):
-            st.image("/app/reports/overall_score.png", caption="Overall Score Distribution")
-        else:
+        try:
+            st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/reports/overall_score.png", caption="Overall Score Distribution")
+        except:
             st.info("Overall Score report graph not found.")
     with colB:
-        if os.path.exists("/app/reports/focus_vs_realism.png"):
-            st.image("/app/reports/focus_vs_realism.png", caption="Product Focus vs Realism")
-        else:
+        try:
+            st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/reports/focus_vs_realism.png", caption="Product Focus vs Realism")
+        except:
             st.info("Focus vs Realism report graph not found.")
 
     st.markdown("---")

@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     
     DATABASE_URL: str
     
-    OPENROUTER_API_KEY: str
+    OPENROUTER_API_KEY: str | None = None
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     
     DEFAULT_PROVIDER: str = "openrouter"

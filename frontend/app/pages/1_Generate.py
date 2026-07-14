@@ -114,11 +114,8 @@ else:
                 st.write(f"**{img_data['model_name'].split('/')[-1]}**")
                 
                 if img_data["generation_status"] == "COMPLETED":
-                    path = f"/app/{img_data['image_path']}"
-                    if os.path.exists(path):
-                        st.image(path, use_container_width=True)
-                    elif os.path.exists(f"../{img_data['image_path']}"):
-                         st.image(f"../{img_data['image_path']}", use_container_width=True)
+                    public_url = f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/{img_data['image_path']}"
+                    st.image(public_url, use_container_width=True)
                          
                     rated_key = f"rated_{img_data['id']}"
                     if st.session_state.get(rated_key):
