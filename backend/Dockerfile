@@ -6,10 +6,11 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend source and static files
+# Copy backend source, static files, and initial database
 COPY backend /app/backend
 COPY docs /app/docs
 COPY reports /app/reports
+COPY data /app/data
 
 # Expose port and start script
 EXPOSE 8000
