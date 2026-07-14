@@ -1,5 +1,4 @@
-generated_images/*
-!generated_images/.gitkeep
+
 .env
 __pycache__/
 *.pyc
