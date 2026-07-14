@@ -26,10 +26,7 @@ services:
       - .env
     environment:
       - BACKEND_URL=http://backend:8000
+      - PUBLIC_API_URL=http://localhost:8000
     depends_on:
       - backend
-    volumes:
-      - ./generated_images:/app/generated_images
-      - ./reports:/app/reports
-      - ./docs:/app/docs
     restart: unless-stopped

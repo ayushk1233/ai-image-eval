@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import logging
 from backend.app.core.logging import setup_logging
 from backend.app.api.health import router as health_router
@@ -33,6 +34,15 @@ app.include_router(prompts_router, prefix="/api/prompts", tags=["Prompts"])
 app.include_router(generations_router, prefix="/api/generations", tags=["Generations"])
 app.include_router(ratings_router, prefix="/api/ratings", tags=["Ratings"])
 app.include_router(analytics_router, prefix="/api/analytics", tags=["Analytics"])
+
+os.makedirs("generated_images", exist_ok=True)
+app.mount("/generated_images", StaticFiles(directory="generated_images"), name="generated_images")
+
+if os.path.exists("docs/showcase"):
+    app.mount("/docs/showcase", StaticFiles(directory="docs/showcase"), name="showcase")
+
+if os.path.exists("reports"):
+    app.mount("/reports", StaticFiles(directory="reports"), name="reports")
 
 @app.on_event("startup")
 async def startup_event():

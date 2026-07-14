@@ -6,8 +6,10 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend source
+# Copy backend source and static files
 COPY backend /app/backend
+COPY docs /app/docs
+COPY reports /app/reports
 
 # Expose port and run uvicorn
 EXPOSE 8000

@@ -53,11 +53,7 @@ try:
                     if prompt_text:
                         st.markdown(f"<p style='font-size:0.9rem; color:#ccc; margin-top:0.5rem;'><em>\"{prompt_text}\"</em></p>", unsafe_allow_html=True)
                         
-                    path = f"/app/{gen['image_path']}"
-                    if os.path.exists(path):
-                        st.image(path, use_container_width=True)
-                    elif os.path.exists(f"../{gen['image_path']}"):
-                        st.image(f"../{gen['image_path']}", use_container_width=True)
+                    st.image(f"{os.environ.get('PUBLIC_API_URL', 'http://localhost:8000')}/{gen['image_path']}", use_container_width=True)
                         
                     rated_key = f"hist_rated_{gen['id']}"
                     if gen.get("ratings") or st.session_state.get(rated_key):
