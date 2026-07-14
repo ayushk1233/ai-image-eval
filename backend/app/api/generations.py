@@ -13,7 +13,14 @@ router = APIRouter()
 def create_generation(request: ImageGenerationCreate, db: Session = Depends(get_db)):
     """Triggers image generation via the abstraction worker."""
     try:
-        generation = generate_image_for_prompt(db, request.prompt_id, request.model_name)
+        generation = generate_image_for_prompt(
+            db=db,
+            model_name=request.model_name,
+            prompt_id=request.prompt_id,
+            custom_prompt_text=request.custom_prompt,
+            api_key=request.api_key,
+            participant_id=request.participant_id
+        )
         return generation
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -28,10 +35,21 @@ def get_unrated_generations(participant_id: int = Query(...), db: Session = Depe
         Rating.participant_id == participant_id
     ).subquery()
 
-    # Query completed images not in the rated list
+    # Query completed images not in the rated list, and ONLY benchmark images (participant_id is None)
     unrated = db.query(ImageGeneration).filter(
         ImageGeneration.generation_status == "COMPLETED",
+        ImageGeneration.participant_id.is_(None),
         ~ImageGeneration.id.in_(rated_image_ids)
     ).all()
     
     return unrated
+
+@router.get("/participant/{participant_id}", response_model=List[ImageGenerationResponse])
+def get_participant_generations(participant_id: int, db: Session = Depends(get_db)):
+    """Returns successfully generated images that the participant created themselves."""
+    generations = db.query(ImageGeneration).filter(
+        ImageGeneration.participant_id == participant_id,
+        ImageGeneration.generation_status == "COMPLETED"
+    ).all()
+    
+    return generations

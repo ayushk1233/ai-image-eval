@@ -17,6 +17,12 @@ def submit_rating(rating_data: RatingCreate, db: Session = Depends(get_db)):
         visual_quality=rating_data.visual_quality,
         indian_relevance=rating_data.indian_relevance,
         overall=rating_data.overall,
+        commercial_viability=rating_data.commercial_viability,
+        product_focus=rating_data.product_focus,
+        anatomical_correctness=rating_data.anatomical_correctness,
+        lighting_consistency=rating_data.lighting_consistency,
+        fabric_realism=rating_data.fabric_realism,
+        demographic_authenticity=rating_data.demographic_authenticity,
         comments=rating_data.comments
     )
     db.add(new_rating)

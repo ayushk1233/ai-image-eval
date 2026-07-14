@@ -13,6 +13,7 @@ class Participant(Base, TimestampMixin):
     consent_given_at = Column(DateTime, nullable=False)
 
     ratings = relationship("Rating", back_populates="participant", cascade="all, delete-orphan")
+    image_generations = relationship("ImageGeneration", back_populates="participant", cascade="all, delete-orphan")
 
     __table_args__ = (
         CheckConstraint('age >= 18', name='check_participant_age'),

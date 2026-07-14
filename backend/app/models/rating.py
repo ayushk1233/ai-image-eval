@@ -13,6 +13,12 @@ class Rating(Base, TimestampMixin):
     visual_quality = Column(Integer, nullable=False)
     indian_relevance = Column(Integer, nullable=False)
     overall = Column(Integer, nullable=False)
+    commercial_viability = Column(Integer, nullable=False, default=3)
+    product_focus = Column(Integer, nullable=False, default=3)
+    anatomical_correctness = Column(Integer, nullable=False, default=3)
+    lighting_consistency = Column(Integer, nullable=False, default=3)
+    fabric_realism = Column(Integer, nullable=False, default=3)
+    demographic_authenticity = Column(Integer, nullable=False, default=3)
     
     comments = Column(Text, nullable=True)
 

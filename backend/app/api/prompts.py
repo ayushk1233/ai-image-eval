@@ -9,6 +9,6 @@ router = APIRouter()
 
 @router.get("/", response_model=List[PromptResponse])
 def get_prompts(db: Session = Depends(get_db)):
-    """Fetch all prompts from the database."""
-    prompts = db.query(Prompt).all()
+    """Fetch all benchmark prompts from the database."""
+    prompts = db.query(Prompt).filter(Prompt.category != "Custom").all()
     return prompts

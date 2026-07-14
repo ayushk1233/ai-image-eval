@@ -52,6 +52,25 @@ Two representative prompts are shown below. Each was sent to all three models an
 
 ---
 
+## 📊 Evaluation Criteria
+
+Each image is scored on 10 dimensions:
+
+| Criterion | Description |
+|---|---|
+| **Prompt Adherence** | How faithfully the image follows the text prompt |
+| **Visual Quality** | Sharpness, resolution, and overall aesthetic |
+| **Indian Cultural Relevance** | Accuracy of Indian fashion, styling, and context |
+| **Commercial Viability** | Suitability for real-world e-commerce catalogues |
+| **Product Focus** | How well the clothing/product is featured |
+| **Anatomical Correctness** | Natural human poses, proportions, and features |
+| **Lighting Consistency** | Realistic and consistent light sources |
+| **Fabric & Texture Realism** | Believable fabric drape, sheen, and texture |
+| **Demographic Authenticity** | Authentic representation of Indian demographics |
+| **Overall Impression** | Holistic quality score |
+
+---
+
 ## 🔍 Evaluation Pipeline & Methodology
 
 ### Why We Chose This Evaluation

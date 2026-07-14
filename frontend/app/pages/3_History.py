@@ -3,7 +3,7 @@ import os
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from api_client import get_participant_generations
+from api_client import get_participant_generations, submit_rating
 from components.sidebar import render_sidebar
 from components.auth import init_auth
 
@@ -46,11 +46,55 @@ try:
                 with cols[idx % 3]:
                     st.markdown('<div class="image-container">', unsafe_allow_html=True)
                     st.markdown(f"**Model:** `{gen['model_name']}`")
+                    
+                    prompt_text = gen.get("custom_prompt_text")
+                    if not prompt_text and gen.get("prompt"):
+                        prompt_text = gen["prompt"].get("prompt_text")
+                    if prompt_text:
+                        st.markdown(f"<p style='font-size:0.9rem; color:#ccc; margin-top:0.5rem;'><em>\"{prompt_text}\"</em></p>", unsafe_allow_html=True)
+                        
                     path = f"/app/{gen['image_path']}"
                     if os.path.exists(path):
                         st.image(path, use_container_width=True)
                     elif os.path.exists(f"../{gen['image_path']}"):
                         st.image(f"../{gen['image_path']}", use_container_width=True)
+                        
+                    rated_key = f"hist_rated_{gen['id']}"
+                    if gen.get("ratings") or st.session_state.get(rated_key):
+                        st.success("Rating submitted thanks , your score matter.")
+                    else:
+                        with st.form(f"hist_rate_form_{gen['id']}"):
+                            st.write("Rate this image:")
+                            adherence = st.slider("Prompt Adherence", 1, 5, 3, key=f"hist_adh_{gen['id']}")
+                            visual = st.slider("Visual Quality", 1, 5, 3, key=f"hist_vis_{gen['id']}")
+                            indian = st.slider("Indian Relevance", 1, 5, 3, key=f"hist_ind_{gen['id']}")
+                            
+                            st.markdown("---")
+                            
+                            comm = st.slider("Commercial Viability", 1, 5, 3, key=f"hist_comm_{gen['id']}")
+                            prod = st.slider("Product Focus", 1, 5, 3, key=f"hist_prod_{gen['id']}")
+                            anat = st.slider("Anatomical Correctness", 1, 5, 3, key=f"hist_anat_{gen['id']}")
+                            light = st.slider("Lighting Consistency", 1, 5, 3, key=f"hist_light_{gen['id']}")
+                            fabric = st.slider("Fabric Realism", 1, 5, 3, key=f"hist_fabric_{gen['id']}")
+                            demo = st.slider("Demographic Auth.", 1, 5, 3, key=f"hist_demo_{gen['id']}")
+
+                            st.markdown("---")
+                            overall = st.slider("Overall Impression", 1, 5, 3, key=f"hist_ov_{gen['id']}")
+                                
+                            if st.form_submit_button("Submit Rating"):
+                                try:
+                                    submit_rating(
+                                        st.session_state.participant_id, 
+                                        gen['id'], 
+                                        adherence, visual, indian, overall, 
+                                        comm, prod, anat, light, fabric, demo, 
+                                        ""
+                                    )
+                                    st.session_state[rated_key] = True
+                                    st.rerun()
+                                except Exception as e:
+                                    st.error(f"Failed to submit: {str(e)}")
+                    
                     st.markdown('</div>', unsafe_allow_html=True)
 except Exception as e:
     st.error(f"Failed to load your images: {str(e)}")

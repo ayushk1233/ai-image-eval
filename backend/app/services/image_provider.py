@@ -34,9 +34,12 @@ class BaseImageProvider(ABC):
         return filepath
 
 class OpenRouterImageProvider(BaseImageProvider):
-    def __init__(self):
+    def __init__(self, api_key: str = None):
+        key = api_key if api_key else settings.OPENROUTER_API_KEY
+        if not key:
+            raise ValueError("No OpenRouter API key provided.")
         self.client = OpenAI(
-            api_key=settings.OPENROUTER_API_KEY,
+            api_key=key,
             base_url=settings.OPENROUTER_BASE_URL
         )
 

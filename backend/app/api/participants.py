@@ -28,3 +28,10 @@ def register_participant(participant: ParticipantCreate, db: Session = Depends(g
     db.commit()
     db.refresh(new_participant)
     return new_participant
+
+@router.get("/login", response_model=ParticipantResponse)
+def login_participant(email: str, db: Session = Depends(get_db)):
+    existing = db.query(Participant).filter(Participant.email == email).first()
+    if not existing:
+        raise HTTPException(status_code=404, detail="Participant not found")
+    return existing

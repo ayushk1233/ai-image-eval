@@ -13,14 +13,20 @@ def get_ratings_df(db: Session) -> pd.DataFrame:
         r.prompt_adherence,
         r.visual_quality,
         r.indian_relevance,
+        r.commercial_viability,
+        r.product_focus,
+        r.anatomical_correctness,
+        r.lighting_consistency,
+        r.fabric_realism,
+        r.demographic_authenticity,
         ig.model_name,
-        p.id as prompt_id,
-        p.prompt_text,
-        p.category,
-        p.use_case
+        COALESCE(p.id, -r.id) as prompt_id,
+        COALESCE(p.prompt_text, ig.custom_prompt_text, 'Custom Prompt') as prompt_text,
+        COALESCE(p.category, 'Custom') as category,
+        COALESCE(p.use_case, 'User Defined') as use_case
     FROM ratings r
     JOIN image_generations ig ON r.image_generation_id = ig.id
-    JOIN prompts p ON ig.prompt_id = p.id
+    LEFT JOIN prompts p ON ig.prompt_id = p.id
     """
     df = pd.read_sql(text(query), db.connection())
     return df
@@ -32,7 +38,11 @@ def calculate_leaderboard(db: Session) -> List[Dict[str, Any]]:
 
     # 1. Calculate averages per model
     avg_df = df.groupby('model_name')[
-        ['overall', 'prompt_adherence', 'visual_quality', 'indian_relevance']
+        [
+            'overall', 'prompt_adherence', 'visual_quality', 'indian_relevance',
+            'commercial_viability', 'product_focus', 'anatomical_correctness',
+            'lighting_consistency', 'fabric_realism', 'demographic_authenticity'
+        ]
     ].mean().reset_index()
 
     # 2. Calculate Win Rate
@@ -69,13 +79,19 @@ def calculate_leaderboard(db: Session) -> List[Dict[str, Any]]:
             "avg_overall": round(float(row["overall"]), 2),
             "avg_prompt_adherence": round(float(row["prompt_adherence"]), 2),
             "avg_visual_quality": round(float(row["visual_quality"]), 2),
-            "avg_indian_relevance": round(float(row["indian_relevance"]), 2)
+            "avg_indian_relevance": round(float(row["indian_relevance"]), 2),
+            "avg_commercial_viability": round(float(row["commercial_viability"]), 2),
+            "avg_product_focus": round(float(row["product_focus"]), 2),
+            "avg_anatomical_correctness": round(float(row["anatomical_correctness"]), 2),
+            "avg_lighting_consistency": round(float(row["lighting_consistency"]), 2),
+            "avg_fabric_realism": round(float(row["fabric_realism"]), 2),
+            "avg_demographic_authenticity": round(float(row["demographic_authenticity"]), 2)
         })
     return result
 
 def calculate_statistics(db: Session) -> Dict[str, Any]:
-    # Need total_images generated
-    query_images = "SELECT count(*) FROM image_generations WHERE generation_status = 'COMPLETED'"
+    # Need total images evaluated (count of ratings)
+    query_images = "SELECT count(*) FROM ratings"
     total_images = db.execute(text(query_images)).scalar() or 0
     
     query_participants = "SELECT count(*) FROM participants"

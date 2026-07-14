@@ -42,18 +42,14 @@ try:
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.markdown(f'<div class="stat-card"><div class="stat-label">Total Images</div><div class="stat-value">{stats["total_images"]}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-label">Images Evaluated</div><div class="stat-value">{stats["total_images"]}</div></div>', unsafe_allow_html=True)
     with col2:
         st.markdown(f'<div class="stat-card"><div class="stat-label">Participants</div><div class="stat-value">{stats["total_participants"]}</div></div>', unsafe_allow_html=True)
     with col3:
         st.markdown(f'<div class="stat-card"><div class="stat-label">Avg Rating</div><div class="stat-value">{stats["avg_overall"]}</div></div>', unsafe_allow_html=True)
     with col4:
         winner = stats["current_leading_model"] or "N/A"
-        if winner.startswith("openai"):
-            winner = "GPT-5-Mini"
-        elif winner.startswith("google"):
-            winner = "Gemini"
-        st.markdown(f'<div class="stat-card"><div class="stat-label">Leading Model</div><div class="stat-value" style="font-size:1.5rem; padding: 0.5rem 0;">{winner}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-label">Leading Model</div><div class="stat-value" style="font-size:1.5rem; padding: 0.5rem 0; word-wrap: break-word;">{winner}</div></div>', unsafe_allow_html=True)
         
     st.markdown("---")
     
@@ -62,8 +58,31 @@ try:
     col1, col2 = st.columns([1, 1])
     with col1:
         render_leaderboard_chart(leaderboard)
-    with col2:
-        render_criteria_radar_chart(leaderboard)
+        
+    st.markdown("---")
+    st.markdown("### Benchmark Report Graphs")
+    colA, colB = st.columns(2)
+    with colA:
+        if os.path.exists("/app/reports/overall_score.png"):
+            st.image("/app/reports/overall_score.png", caption="Overall Score Distribution")
+        else:
+            st.info("Overall Score report graph not found.")
+    with colB:
+        if os.path.exists("/app/reports/focus_vs_realism.png"):
+            st.image("/app/reports/focus_vs_realism.png", caption="Product Focus vs Realism")
+        else:
+            st.info("Focus vs Realism report graph not found.")
+
+    st.markdown("---")
+    render_criteria_radar_chart(leaderboard)
+    
+    st.markdown("---")
+    st.markdown("### Detailed Benchmark Metrics Table")
+    if leaderboard:
+        df_leaderboard = pd.DataFrame(leaderboard)
+        # Clean up column names for display
+        df_leaderboard.columns = [col.replace('_', ' ').title() for col in df_leaderboard.columns]
+        st.dataframe(df_leaderboard, use_container_width=True, hide_index=True)
         
     st.markdown("---")
     st.markdown("### Raw Export")

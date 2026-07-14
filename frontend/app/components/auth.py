@@ -20,4 +20,7 @@ def login(controller, participant_id):
     
 def logout(controller):
     st.session_state.participant_id = None
-    controller.remove('participant_id')
+    try:
+        controller.remove('participant_id')
+    except Exception:
+        pass

@@ -2,7 +2,8 @@ import streamlit as st
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from api_client import register_participant, get_unrated_images, submit_rating
+from api_client import register_participant, get_unrated_images, submit_rating, login_participant
+from components.auth import init_auth, login, logout
 
 st.set_page_config(page_title="Evaluate Images", page_icon="📝", layout="wide")
 
@@ -27,43 +28,56 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-if "participant_id" not in st.session_state:
-    st.session_state.participant_id = None
+cookie_controller = init_auth()
 
 st.title("📝 Evaluate Images")
 
 if not st.session_state.participant_id:
-    st.markdown("### Participant Registration")
-    st.write("Before we begin, please register. You must be 18 or older.")
+    st.write("Before we begin, please log in or register. You must be 18 or older to register.")
     
-    with st.form("registration_form"):
-        name = st.text_input("Name")
-        email = st.text_input("Email Address")
-        age = st.number_input("Age", min_value=1, max_value=120, value=25)
-        
-        st.markdown("#### Consent")
-        st.info("By clicking 'Register & Begin', I consent to my ratings being recorded and analyzed for this AI evaluation study. I understand my email will only be used to prevent duplicate submissions.")
-        
-        submitted = st.form_submit_button("Register & Begin", type="primary")
-        
-        if submitted:
-            if age < 18:
-                st.error("You must be at least 18 years old.")
-            elif not name or not email:
-                st.error("Please fill out all fields.")
-            else:
+    tab1, tab2 = st.tabs(["Log In", "Register"])
+    
+    with tab1:
+        with st.form("login_form_eval"):
+            login_contact = st.text_input("Email or Phone Number")
+            if st.form_submit_button("Log In", type="primary"):
                 try:
-                    participant = register_participant(name, email, age, True)
-                    st.session_state.participant_id = participant["id"]
-                    st.success("Registered successfully!")
+                    p = login_participant(login_contact)
+                    login(cookie_controller, p["id"])
+                    st.success("Logged in successfully!")
                     st.rerun()
                 except Exception as e:
-                    st.error(f"Registration failed. Please make sure you entered a valid email. Error details: {str(e)}")
+                    st.error("Login failed. Participant not found.")
+                    
+    with tab2:
+        with st.form("registration_form_eval"):
+            name = st.text_input("Name")
+            email = st.text_input("Email Address")
+            age = st.number_input("Age", min_value=1, max_value=120, value=25)
+            
+            st.markdown("#### Consent")
+            st.info("By clicking 'Register & Begin', I consent to my ratings being recorded and analyzed for this AI evaluation study. I understand my email will only be used to prevent duplicate submissions.")
+            
+            submitted = st.form_submit_button("Register & Begin", type="primary")
+            
+            if submitted:
+                if age < 18:
+                    st.error("You must be at least 18 years old.")
+                elif not name or not email:
+                    st.error("Please fill out all fields.")
+                else:
+                    try:
+                        participant = register_participant(name, email, age, True)
+                        login(cookie_controller, participant["id"])
+                        st.success("Registered successfully!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Registration failed. Please make sure you entered a valid email. Error details: {str(e)}")
 
 else:
     st.write(f"Logged in as Participant ID: `{st.session_state.participant_id}`")
     if st.button("Log out"):
-        st.session_state.participant_id = None
+        logout(cookie_controller)
         st.rerun()
         
     st.markdown("---")
@@ -71,7 +85,7 @@ else:
     try:
         unrated = get_unrated_images(st.session_state.participant_id)
         if not unrated:
-            st.success("🎉 You have rated all available images! Thank you for your contribution.")
+            st.success("🎉 Evaluation submitted! You have rated all available images in the benchmark dataset.")
         else:
             # We show one image at a time for evaluation
             current_image = unrated[0]
@@ -107,7 +121,19 @@ else:
                     adherence = st.slider("Prompt Adherence", 1, 5, 3)
                     visual = st.slider("Visual Quality", 1, 5, 3)
                     indian = st.slider("Indian Cultural Relevance", 1, 5, 3)
+                    
+                    st.markdown("---")
+                    
+                    comm = st.slider("Commercial Viability", 1, 5, 3)
+                    prod = st.slider("Product Focus", 1, 5, 3)
+                    anat = st.slider("Anatomical Correctness", 1, 5, 3)
+                    light = st.slider("Lighting Consistency", 1, 5, 3)
+                    fabric = st.slider("Fabric Realism", 1, 5, 3)
+                    demo = st.slider("Demographic Auth.", 1, 5, 3)
+
+                    st.markdown("---")
                     overall = st.slider("Overall Impression", 1, 5, 3)
+
                     comments = st.text_area("Optional Comments")
                     
                     submit = st.form_submit_button("Submit Rating", type="primary")
@@ -116,7 +142,9 @@ else:
                             submit_rating(
                                 st.session_state.participant_id, 
                                 current_image["id"], 
-                                adherence, visual, indian, overall, comments
+                                adherence, visual, indian, overall, 
+                                comm, prod, anat, light, fabric, demo, 
+                                comments
                             )
                             st.success("Rating submitted!")
                             st.rerun()

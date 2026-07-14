@@ -8,6 +8,12 @@ class LeaderboardItem(BaseModel):
     avg_prompt_adherence: float
     avg_visual_quality: float
     avg_indian_relevance: float
+    avg_commercial_viability: float
+    avg_product_focus: float
+    avg_anatomical_correctness: float
+    avg_lighting_consistency: float
+    avg_fabric_realism: float
+    avg_demographic_authenticity: float
 
 class Statistics(BaseModel):
     total_images: int

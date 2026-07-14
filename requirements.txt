@@ -12,3 +12,5 @@ streamlit
 httpx
 matplotlib
 email-validator>=2.1.0
+streamlit-cookies-controller
+plotly

@@ -30,4 +30,5 @@ services:
       - backend
     volumes:
       - ./generated_images:/app/generated_images
+      - ./reports:/app/reports
     restart: unless-stopped

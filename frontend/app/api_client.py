@@ -27,12 +27,26 @@ def get_prompts():
     response.raise_for_status()
     return response.json()
 
-def trigger_generation(prompt_id: int, model_name: str):
+def login_participant(email_or_phone: str):
+    url = f"{get_base_url()}/api/participants/login"
+    response = requests.get(url, params={"email": email_or_phone})
+    response.raise_for_status()
+    return response.json()
+
+def trigger_generation(model_name: str, prompt_id: int = None, custom_prompt: str = None, api_key: str = None, participant_id: int = None):
     url = f"{get_base_url()}/api/generations/"
     payload = {
-        "prompt_id": prompt_id,
         "model_name": model_name
     }
+    if prompt_id is not None:
+        payload["prompt_id"] = prompt_id
+    if custom_prompt is not None:
+        payload["custom_prompt"] = custom_prompt
+    if api_key is not None:
+        payload["api_key"] = api_key
+    if participant_id is not None:
+        payload["participant_id"] = participant_id
+        
     response = requests.post(url, json=payload)
     response.raise_for_status()
     return response.json()
@@ -44,7 +58,21 @@ def get_unrated_images(participant_id: int):
     response.raise_for_status()
     return response.json()
 
-def submit_rating(participant_id: int, image_generation_id: int, prompt_adherence: int, visual_quality: int, indian_relevance: int, overall: int, comments: str = None):
+def get_participant_generations(participant_id: int):
+    url = f"{get_base_url()}/api/generations/participant/{participant_id}"
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+
+def submit_rating(
+    participant_id: int, image_generation_id: int, 
+    prompt_adherence: int, visual_quality: int, 
+    indian_relevance: int, overall: int, 
+    commercial_viability: int = 3, product_focus: int = 3, 
+    anatomical_correctness: int = 3, lighting_consistency: int = 3, 
+    fabric_realism: int = 3, demographic_authenticity: int = 3, 
+    comments: str = None
+):
     url = f"{get_base_url()}/api/ratings/"
     payload = {
         "participant_id": participant_id,
@@ -53,6 +81,12 @@ def submit_rating(participant_id: int, image_generation_id: int, prompt_adherenc
         "visual_quality": visual_quality,
         "indian_relevance": indian_relevance,
         "overall": overall,
+        "commercial_viability": commercial_viability,
+        "product_focus": product_focus,
+        "anatomical_correctness": anatomical_correctness,
+        "lighting_consistency": lighting_consistency,
+        "fabric_realism": fabric_realism,
+        "demographic_authenticity": demographic_authenticity,
         "comments": comments
     }
     response = requests.post(url, json=payload)
