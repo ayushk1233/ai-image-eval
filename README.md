@@ -2,6 +2,8 @@
 
 > **Benchmarking AI image generation models for Indian E-commerce Fashion Photography**
 
+🚀 **Live Deployment:** [https://ai-image-eval-frontend.onrender.com/](https://ai-image-eval-frontend.onrender.com/)
+
 A full-stack human evaluation platform that measures how well state-of-the-art image generation models — **GPT-5-Image-Mini**, **Gemini 2.5 Flash**, and **Gemini 3.1 Flash Preview** — perform on prompts specifically crafted for Indian fashion e-commerce.
 
 Participants rate each generated image across **10 criteria** including cultural authenticity, fabric realism, anatomical correctness, and commercial viability. This system provides a full pipeline from programmatic image generation to blind randomized human evaluation, resulting in statistically significant insights into model performance.
