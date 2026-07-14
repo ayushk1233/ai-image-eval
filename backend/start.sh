@@ -7,7 +7,9 @@ mkdir -p data generated_images uploads exports
 
 # 2. Execute alembic upgrade head to apply all database migrations
 echo "Running database migrations..."
+cd backend
 alembic upgrade head
+cd ..
 
 # 3. Execute database seed script to populate benchmark prompts
 echo "Seeding benchmark prompts..."
